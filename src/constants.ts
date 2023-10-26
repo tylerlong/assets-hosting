@@ -1,0 +1,6 @@
+const CONSTS = {
+  HELLO_TO_ELECTRON: 'HELLO_TO_ELECTRON',
+  HELLO_TO_WEB: 'HELLO_TO_WEB',
+};
+
+export default CONSTS;
