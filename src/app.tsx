@@ -20,7 +20,7 @@ const App = (props: { store: Store }) => {
     const { store } = props;
     return (
       <>
-        <Title>Untitled App</Title>
+        <Title>Image Hosting by GitHub Pages</Title>
         <Space>
           <Button
             onClick={() => {
