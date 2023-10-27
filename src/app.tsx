@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
-import { Button, Space, Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import { auto } from 'manate/react';
 
-import type { Store } from './store';
+import type { Store, Token } from './store';
 import CONSTS from './constants';
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
 
 const App = (props: { store: Store }) => {
   useEffect(() => {
-    const removeListner = global.ipc.on(CONSTS.HELLO_TO_WEB, (event: any, args: any) => {
-      console.log(args);
+    const removeListner = global.ipc.on(CONSTS.LOGIN_TO_WEB, (event: any, token: Token) => {
+      console.log(token);
+      props.store.token = token;
     });
     return () => {
       removeListner();
@@ -21,24 +22,11 @@ const App = (props: { store: Store }) => {
     return (
       <>
         <Title>Image Hosting by GitHub Pages</Title>
-        <Space>
-          <Button
-            onClick={() => {
-              store.count -= 1;
-            }}
-          >
-            -
-          </Button>
-          <Text>{store.count}</Text>
-          <Button
-            onClick={() => {
-              store.count += 1;
-            }}
-          >
-            +
-          </Button>
-          <Button onClick={() => global.ipc.invoke(CONSTS.HELLO_TO_ELECTRON, 'Hello from renderer')}>Hello</Button>
-        </Space>
+        {store.token === undefined ? (
+          <Button onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>Login via GitHub</Button>
+        ) : (
+          <Title level={2}>Welcome!</Title>
+        )}
       </>
     );
   };

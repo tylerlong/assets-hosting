@@ -1,7 +1,12 @@
 import { manage } from 'manate';
 
+export interface Token {
+  access_token: string;
+  refresh_token: string;
+}
+
 export class Store {
-  public count = 0;
+  public token: Token | undefined = undefined;
 }
 
 const store = manage(new Store());

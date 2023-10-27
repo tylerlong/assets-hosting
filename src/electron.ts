@@ -1,5 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
+import axios from 'axios';
+import qs from 'qs';
 
 import CONSTS from './constants';
 
@@ -35,7 +37,37 @@ app.on('window-all-closed', () => {
   }
 });
 
-ipcMain.handle(CONSTS.HELLO_TO_ELECTRON, (event, message) => {
-  console.log(message);
-  event.sender.send(CONSTS.HELLO_TO_WEB, 'Hello from main');
+ipcMain.handle(CONSTS.LOGIN_TO_ELECTRON, (event) => {
+  let authWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+  });
+  authWindow.loadURL(`https://github.com/login/oauth/authorize?client_id=${CONSTS.GITHUB_CLIENT_ID}`);
+  authWindow.on('closed', () => {
+    authWindow = null;
+  });
+  const handleRedirectUrl = async (url) => {
+    if (url.startsWith('https://github.com/tylerlong/image-hosting/?code=')) {
+      authWindow.close();
+      const code = url.split('=')[1];
+      const r = await axios.post(
+        'https://github.com/login/oauth/access_token',
+        qs.stringify({
+          client_id: CONSTS.GITHUB_CLIENT_ID,
+          client_secret: CONSTS.GITHUB_CLIENT_SECRET,
+          code,
+        }),
+      );
+      event.sender.send(CONSTS.LOGIN_TO_WEB, qs.parse(r.data));
+    }
+  };
+  // the first time auth will trigger will-navigate
+  // the second time (and afterwards) auth will trigger will-redirect
+  // so we need to handle both will-navigate and will-redirect
+  authWindow.webContents.on('will-navigate', (event, url) => {
+    handleRedirectUrl(url);
+  });
+  authWindow.webContents.on('will-redirect', (event, url) => {
+    handleRedirectUrl(url);
+  });
 });
