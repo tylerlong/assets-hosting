@@ -10,9 +10,8 @@ const { Title } = Typography;
 const App = (props: { store: Store }) => {
   useEffect(() => {
     const removeListner = global.ipc.on(CONSTS.LOGIN_TO_WEB, (event: any, token: Token) => {
-      console.log(token);
       props.store.token = token;
-      props.store.fetchRepos();
+      props.store.init();
     });
     return () => {
       removeListner();
@@ -26,7 +25,14 @@ const App = (props: { store: Store }) => {
         {store.token === undefined ? (
           <Button onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>Login via GitHub</Button>
         ) : (
-          <Title level={2}>Welcome!</Title>
+          <>
+            <Title level={2}>Welcome!</Title>
+            <ul>
+              {store.repos.map((repo) => (
+                <li key={repo.full_name}>{repo.full_name}</li>
+              ))}
+            </ul>
+          </>
         )}
       </>
     );

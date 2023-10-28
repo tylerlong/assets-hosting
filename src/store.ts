@@ -3,21 +3,45 @@ import axios from 'axios';
 
 export interface Token {
   access_token: string;
-  refresh_token: string;
+}
+
+export interface User {
+  login: string;
+}
+
+export interface Repo {
+  full_name: string;
 }
 
 export class Store {
   public token: Token | undefined = undefined;
 
-  public user = undefined;
+  public repos: Repo[] = [];
 
-  public async fetchRepos() {
-    const r = await axios.get('https://api.github.com/user', {
-      headers: {
-        Authorization: `token ${this.token?.access_token}`,
-      },
-    });
-    console.log(JSON.stringify(r.data, null, 2));
+  public async init() {
+    let hasNextPage = true;
+    let page = 1;
+    while (hasNextPage) {
+      const r = await axios.get('https://api.github.com/user/repos', {
+        headers: {
+          Authorization: `token ${this.token?.access_token}`,
+        },
+        params: {
+          visibility: 'public',
+          per_page: 100,
+          page,
+          affiliation: 'owner,collaborator',
+          sort: 'updated',
+        },
+      });
+      for (const repo of r.data) {
+        if (repo.has_pages === true) {
+          this.repos.push(repo);
+        }
+      }
+      hasNextPage = r.data.length === 100;
+      page += 1;
+    }
   }
 }
 
