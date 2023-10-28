@@ -26,11 +26,22 @@ const App = (props: { store: Store }) => {
           <Button onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>Login via GitHub</Button>
         ) : (
           <>
-            <Title level={2}>Welcome!</Title>
+            <Title level={3}>{store.repo === undefined ? 'Please choose a repo:' : store.repo.full_name}</Title>
             <ul>
-              {store.repos.map((repo) => (
-                <li key={repo.full_name}>{repo.full_name}</li>
-              ))}
+              {store.repo === undefined
+                ? store.repos.map((repo) => (
+                    <li key={repo.full_name}>
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          store.repo = repo;
+                        }}
+                      >
+                        {repo.full_name}
+                      </Button>
+                    </li>
+                  ))
+                : null}
             </ul>
           </>
         )}

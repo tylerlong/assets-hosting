@@ -18,6 +18,8 @@ export class Store {
 
   public repos: Repo[] = [];
 
+  public repo: Repo | undefined = undefined;
+
   public async init() {
     let hasNextPage = true;
     let page = 1;
