@@ -12,6 +12,7 @@ const App = (props: { store: Store }) => {
     const removeListner = global.ipc.on(CONSTS.LOGIN_TO_WEB, (event: any, token: Token) => {
       console.log(token);
       props.store.token = token;
+      props.store.fetchRepos();
     });
     return () => {
       removeListner();
