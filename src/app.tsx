@@ -27,22 +27,28 @@ const App = (props: { store: Store }) => {
         ) : (
           <>
             <Title level={3}>{store.repo === undefined ? 'Please choose a repo:' : store.repo.full_name}</Title>
-            <ul>
-              {store.repo === undefined
-                ? store.repos.map((repo) => (
-                    <li key={repo.full_name}>
-                      <Button
-                        type="link"
-                        onClick={() => {
-                          store.repo = repo;
-                        }}
-                      >
-                        {repo.full_name}
-                      </Button>
-                    </li>
-                  ))
-                : null}
-            </ul>
+
+            {store.repo === undefined ? (
+              <ul>
+                {store.repos.map((repo) => (
+                  <li key={repo.full_name}>
+                    <Button
+                      type="link"
+                      onClick={() => {
+                        store.repo = repo;
+                      }}
+                    >
+                      {repo.full_name}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <>
+                <Button>Create a folder</Button>
+                <Button>Upload an image</Button>
+              </>
+            )}
           </>
         )}
       </>
