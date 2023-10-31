@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Typography } from 'antd';
+import { Button, Divider, Space, Typography } from 'antd';
 import { auto } from 'manate/react';
 
 import type { Store, Token } from './store';
@@ -35,7 +35,7 @@ const App = (props: { store: Store }) => {
                     <Button
                       type="link"
                       onClick={() => {
-                        store.repo = repo;
+                        store.chooseRepo(repo);
                       }}
                     >
                       {repo.full_name}
@@ -45,8 +45,18 @@ const App = (props: { store: Store }) => {
               </ul>
             ) : (
               <>
-                <Button>Create a folder</Button>
-                <Button>Upload an image</Button>
+                <Space>
+                  <Button>Create a folder</Button>
+                  <Button>Upload an image</Button>
+                </Space>
+                <Divider />
+                <ul>
+                  {store.contents.map((content) => (
+                    <li key={content.name}>
+                      {content.name} - {content.type}
+                    </li>
+                  ))}
+                </ul>
               </>
             )}
           </>

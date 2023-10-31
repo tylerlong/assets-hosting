@@ -13,12 +13,20 @@ export interface Repo {
   full_name: string;
 }
 
+export interface Content {
+  name: string;
+  path: string;
+  type: 'file' | 'dir';
+}
+
 export class Store {
   public token: Token | undefined = undefined;
 
   public repos: Repo[] = [];
 
   public repo: Repo | undefined = undefined;
+
+  public contents: Content[] = [];
 
   public async init() {
     let hasNextPage = true;
@@ -44,6 +52,12 @@ export class Store {
       hasNextPage = r.data.length === 100;
       page += 1;
     }
+  }
+
+  public async chooseRepo(repo: Repo) {
+    this.repo = repo;
+    const r = await axios.get(`https://api.github.com/repos/${repo.full_name}/contents`);
+    this.contents = r.data;
   }
 }
 
