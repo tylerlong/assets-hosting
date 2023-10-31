@@ -37,6 +37,16 @@ app.on('window-all-closed', () => {
   }
 });
 
+ipcMain.handle(CONSTS.HOST, async (event, login) => {
+  const r = await axios.get(`https://${login}.github.io`, {
+    maxRedirects: 0,
+    validateStatus: () => true,
+  });
+  if (r.status === 301) {
+    event.sender.send(CONSTS.HOST, r.headers.location);
+  }
+});
+
 ipcMain.handle(CONSTS.LOGIN_TO_ELECTRON, (event) => {
   let authWindow = new BrowserWindow({
     width: 800,

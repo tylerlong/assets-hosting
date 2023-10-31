@@ -1,5 +1,8 @@
 import { manage } from 'manate';
 import axios from 'axios';
+import { message } from 'antd';
+
+import CONSTS from './constants';
 
 export interface Token {
   access_token: string;
@@ -10,6 +13,7 @@ export interface User {
 }
 
 export interface Repo {
+  name: string;
   full_name: string;
 }
 
@@ -30,7 +34,26 @@ export class Store {
 
   public path = '';
 
+  public user: User | undefined = undefined;
+
+  public host = '';
+
   public async init() {
+    // get host, like https://chuntaoliu.com/
+    this.user = (
+      await axios.get('https://api.github.com/user', {
+        headers: {
+          Authorization: `token ${this.token?.access_token}`,
+        },
+      })
+    ).data;
+    this.host = `https://${this.user.login}.github.io/`;
+    global.ipc.on(CONSTS.HOST, (event: any, host: string) => {
+      this.host = host;
+    });
+    global.ipc.invoke(CONSTS.HOST, this.user.login);
+
+    // get all the repos
     let hasNextPage = true;
     let page = 1;
     while (hasNextPage) {
@@ -67,6 +90,9 @@ export class Store {
       const r = await axios.get(`https://api.github.com/repos/${this.repo.full_name}/contents/${content.path}`);
       this.path = content.path;
       this.contents = r.data.filter((content: Content) => content.name !== '.gitkeep');
+    } else {
+      navigator.clipboard.writeText(`${this.host}${this.repo.name}/${content.path}`);
+      message.success('Copied to clipboard');
     }
   }
 }
