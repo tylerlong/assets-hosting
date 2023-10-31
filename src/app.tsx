@@ -51,9 +51,29 @@ const App = (props: { store: Store }) => {
                 </Space>
                 <Divider />
                 <ul>
+                  {store.path === '' ? null : (
+                    <li key="..">
+                      <Button
+                        type="link"
+                        onClick={() =>
+                          store.chooseContent({
+                            type: 'dir',
+                            name: '',
+                            path: store.path.split('/').slice(0, -1).join('/'),
+                          })
+                        }
+                      >
+                        ⬆️
+                      </Button>
+                    </li>
+                  )}
                   {store.contents.map((content) => (
                     <li key={content.name}>
-                      {content.name} - {content.type}
+                      {content.type === 'dir' ? '📁' : ''}
+                      <Button type="link" onClick={() => store.chooseContent(content)}>
+                        {content.name}
+                        {content.type === 'dir' ? '/' : ''}
+                      </Button>
                     </li>
                   ))}
                 </ul>

@@ -28,6 +28,8 @@ export class Store {
 
   public contents: Content[] = [];
 
+  public path = '';
+
   public async init() {
     let hasNextPage = true;
     let page = 1;
@@ -57,7 +59,15 @@ export class Store {
   public async chooseRepo(repo: Repo) {
     this.repo = repo;
     const r = await axios.get(`https://api.github.com/repos/${repo.full_name}/contents`);
-    this.contents = r.data;
+    this.contents = r.data.filter((content: Content) => content.name !== '.gitkeep');
+  }
+
+  public async chooseContent(content: Content) {
+    if (content.type === 'dir') {
+      const r = await axios.get(`https://api.github.com/repos/${this.repo.full_name}/contents/${content.path}`);
+      this.path = content.path;
+      this.contents = r.data.filter((content: Content) => content.name !== '.gitkeep');
+    }
   }
 }
 
