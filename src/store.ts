@@ -15,6 +15,7 @@ export interface User {
 export interface Repo {
   name: string;
   full_name: string;
+  owner: User;
 }
 
 export interface Content {
@@ -83,6 +84,9 @@ export class Store {
     this.repo = repo;
     const r = await axios.get(`https://api.github.com/repos/${repo.full_name}/contents`);
     this.contents = r.data.filter((content: Content) => content.name !== '.gitkeep');
+
+    // get host for the current repo
+    global.ipc.invoke(CONSTS.HOST, repo.owner.login);
   }
 
   public async chooseContent(content: Content) {

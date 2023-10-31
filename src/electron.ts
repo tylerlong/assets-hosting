@@ -44,6 +44,8 @@ ipcMain.handle(CONSTS.HOST, async (event, login) => {
   });
   if (r.status === 301) {
     event.sender.send(CONSTS.HOST, r.headers.location);
+  } else {
+    event.sender.send(CONSTS.HOST, `https://${login}.github.io/`);
   }
 });
 
