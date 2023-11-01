@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Divider, Space, Typography } from 'antd';
+import { Button, Divider, Space, Typography, Upload } from 'antd';
 import { auto } from 'manate/react';
 
 import type { Store, Token } from './store';
@@ -47,7 +47,25 @@ const App = (props: { store: Store }) => {
               <>
                 <Space>
                   <Button>Create a folder</Button>
-                  <Button>Upload an image</Button>
+                  <Upload
+                    multiple={false}
+                    accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                    showUploadList={false}
+                    customRequest={({ onSuccess }) => setTimeout(() => onSuccess('ok'), 0)}
+                    onChange={({ file }) => {
+                      if (file.status !== 'done') {
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        const base64 = (e.target.result as string).split(';base64,')[1];
+                        store.upload(file.name, base64);
+                      };
+                      reader.readAsDataURL(file.originFileObj);
+                    }}
+                  >
+                    <Button>Upload an image</Button>
+                  </Upload>
                 </Space>
                 <Divider />
                 <ul>

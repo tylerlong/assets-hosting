@@ -1,6 +1,7 @@
 import { manage } from 'manate';
 import axios from 'axios';
 import { message } from 'antd';
+import path from 'path';
 
 import CONSTS from './constants';
 
@@ -98,6 +99,22 @@ export class Store {
       navigator.clipboard.writeText(`${this.host}${this.repo.name}/${content.path}`);
       message.success('Copied to clipboard');
     }
+  }
+
+  public async upload(name: string, base64: string) {
+    await axios.put(
+      `https://api.github.com/repos/${this.repo?.full_name}/contents/${path.join(this.path, name)}`,
+      {
+        message: 'upload',
+        content: base64,
+      },
+      {
+        headers: {
+          Authorization: `token ${this.token?.access_token}`,
+        },
+      },
+    );
+    this.chooseContent({ type: 'dir', path: this.path, name: '' });
   }
 }
 
