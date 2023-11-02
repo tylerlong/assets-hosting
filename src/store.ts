@@ -3,6 +3,10 @@ import axios from 'axios';
 import { message } from 'antd';
 import path from 'path';
 
+const github = axios.create({
+  baseURL: 'https://api.github.com',
+});
+
 import CONSTS from './constants';
 
 export interface Token {
@@ -43,13 +47,8 @@ export class Store {
 
   public async init() {
     // get host, like https://chuntaoliu.com/
-    this.user = (
-      await axios.get('https://api.github.com/user', {
-        headers: {
-          Authorization: `token ${this.token?.access_token}`,
-        },
-      })
-    ).data;
+    github.defaults.headers.common.Authorization = `token ${this.token?.access_token}`;
+    this.user = (await github.get('/user')).data;
     this.host = `https://${this.user.login}.github.io/`;
     global.ipc.on(CONSTS.HOST, (event: any, host: string) => {
       this.host = host;
@@ -60,10 +59,7 @@ export class Store {
     let hasNextPage = true;
     let page = 1;
     while (hasNextPage) {
-      const r = await axios.get('https://api.github.com/user/repos', {
-        headers: {
-          Authorization: `token ${this.token?.access_token}`,
-        },
+      const r = await github.get('/user/repos', {
         params: {
           visibility: 'public',
           per_page: 100,
@@ -84,7 +80,7 @@ export class Store {
 
   public async chooseRepo(repo: Repo) {
     this.repo = repo;
-    const r = await axios.get(`https://api.github.com/repos/${repo.full_name}/contents`);
+    const r = await github.get(`/repos/${repo.full_name}/contents`);
     this.contents = r.data.filter((content: Content) => content.name !== '.gitkeep');
 
     // get host for the current repo
@@ -93,7 +89,7 @@ export class Store {
 
   public async chooseContent(content: { type: 'file' | 'dir'; path: string }) {
     if (content.type === 'dir') {
-      const r = await axios.get(`https://api.github.com/repos/${this.repo.full_name}/contents/${content.path}`);
+      const r = await github.get(`/repos/${this.repo.full_name}/contents/${content.path}`);
       this.path = content.path;
       this.contents = r.data.filter((content: Content) => content.name !== '.gitkeep');
     } else {
@@ -103,18 +99,10 @@ export class Store {
   }
 
   public async upload(name: string, base64: string) {
-    await axios.put(
-      `https://api.github.com/repos/${this.repo?.full_name}/contents/${path.join(this.path, name)}`,
-      {
-        message: `Upload ${name}`,
-        content: base64,
-      },
-      {
-        headers: {
-          Authorization: `token ${this.token?.access_token}`,
-        },
-      },
-    );
+    await github.put(`/repos/${this.repo?.full_name}/contents/${path.join(this.path, name)}`, {
+      message: `Upload ${name}`,
+      content: base64,
+    });
     this.refresh();
   }
 
@@ -124,13 +112,10 @@ export class Store {
 
   public async deleteContent(content: Content) {
     if (content.type === 'file') {
-      await axios.delete(`https://api.github.com/repos/${this.repo?.full_name}/contents/${content.path}`, {
+      await github.delete(`/repos/${this.repo?.full_name}/contents/${content.path}`, {
         data: {
           message: `Delete ${content.name}`,
           sha: content.sha,
-        },
-        headers: {
-          Authorization: `token ${this.token?.access_token}`,
         },
       });
       this.refresh();
