@@ -3,6 +3,8 @@ import { join } from 'path';
 import axios from 'axios';
 import qs from 'qs';
 
+app.commandLine.appendSwitch('disable-http-cache');
+
 import CONSTS from './constants';
 
 const createWindow = () => {
