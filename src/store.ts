@@ -23,6 +23,7 @@ export interface Content {
   name: string;
   path: string;
   type: 'file' | 'dir';
+  sha: string;
 }
 
 export class Store {
@@ -90,7 +91,7 @@ export class Store {
     global.ipc.invoke(CONSTS.HOST, repo.owner.login);
   }
 
-  public async chooseContent(content: Content) {
+  public async chooseContent(content: { type: 'file' | 'dir'; path: string }) {
     if (content.type === 'dir') {
       const r = await axios.get(`https://api.github.com/repos/${this.repo.full_name}/contents/${content.path}`);
       this.path = content.path;
@@ -105,7 +106,7 @@ export class Store {
     await axios.put(
       `https://api.github.com/repos/${this.repo?.full_name}/contents/${path.join(this.path, name)}`,
       {
-        message: 'upload',
+        message: `Upload ${name}`,
         content: base64,
       },
       {
@@ -114,7 +115,28 @@ export class Store {
         },
       },
     );
-    this.chooseContent({ type: 'dir', path: this.path, name: '' });
+    this.refresh();
+  }
+
+  public async refresh() {
+    this.chooseContent({ type: 'dir', path: this.path });
+  }
+
+  public async deleteContent(content: Content) {
+    if (content.type === 'file') {
+      await axios.delete(`https://api.github.com/repos/${this.repo?.full_name}/contents/${content.path}`, {
+        data: {
+          message: `Delete ${content.name}`,
+          sha: content.sha,
+        },
+        headers: {
+          Authorization: `token ${this.token?.access_token}`,
+        },
+      });
+      this.refresh();
+    } else {
+      // delete all the files in the dir
+    }
   }
 }
 

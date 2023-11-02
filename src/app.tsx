@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Button, Divider, Space, Typography, Upload } from 'antd';
+import { Button, Divider, Popconfirm, Space, Typography, Upload } from 'antd';
 import { auto } from 'manate/react';
+import { DeleteOutlined } from '@ant-design/icons';
 
 import type { Store, Token } from './store';
 import CONSTS from './constants';
@@ -76,7 +77,6 @@ const App = (props: { store: Store }) => {
                         onClick={() =>
                           store.chooseContent({
                             type: 'dir',
-                            name: '',
                             path: store.path.split('/').slice(0, -1).join('/'),
                           })
                         }
@@ -92,6 +92,17 @@ const App = (props: { store: Store }) => {
                         {content.name}
                         {content.type === 'dir' ? '/' : ''}
                       </Button>
+                      <Popconfirm
+                        title={`Delete the ${content.type === 'dir' ? 'folder' : 'file'}`}
+                        description={`Are you sure to delete this ${content.type === 'dir' ? 'folder' : 'file'}?`}
+                        onConfirm={() => {
+                          store.deleteContent(content);
+                        }}
+                      >
+                        <Button type="link" danger>
+                          <DeleteOutlined />
+                        </Button>
+                      </Popconfirm>
                     </li>
                   ))}
                 </ul>

@@ -17,6 +17,7 @@
     "watch": "ts-node scripts/watch.ts"
   },
   "devDependencies": {
+    "@ant-design/icons": "^5.2.6",
     "@types/node": "^20.8.9",
     "@types/qs": "^6.9.9",
     "@types/react-dom": "^18.2.14",
