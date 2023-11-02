@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Button, Divider, Popconfirm, Space, Typography, Upload } from 'antd';
+import { Button, Divider, Popconfirm, Space, Tooltip, Typography, Upload } from 'antd';
 import { auto } from 'manate/react';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, ReloadOutlined, UploadOutlined } from '@ant-design/icons';
 
 import type { Store, Token } from './store';
 import CONSTS from './constants';
@@ -47,7 +47,9 @@ const App = (props: { store: Store }) => {
             ) : (
               <>
                 <Space>
-                  <Button>Create a folder</Button>
+                  <Tooltip title="refresh">
+                    <Button shape="circle" icon={<ReloadOutlined />} onClick={() => store.refresh()} />
+                  </Tooltip>
                   <Upload
                     multiple={false}
                     accept=".png,.jpg,.jpeg,image/png,image/jpeg"
@@ -65,7 +67,9 @@ const App = (props: { store: Store }) => {
                       reader.readAsDataURL(file.originFileObj);
                     }}
                   >
-                    <Button>Upload an image</Button>
+                    <Tooltip title="upload">
+                      <Button icon={<UploadOutlined />} />
+                    </Tooltip>
                   </Upload>
                 </Space>
                 <Divider />
