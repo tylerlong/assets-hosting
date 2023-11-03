@@ -124,14 +124,33 @@ export class Store {
     }
   }
 
-  public async rename(content: Content, newName: string) {
-    if (newName === content.name) {
+  public async rename(content: Content, newPath: string) {
+    if (newPath === content.path) {
       return;
     }
     if (content.type === 'file') {
-      console.log(`rename file ${content.name} to ${newName}`);
+      // ref: https://medium.com/@obodley/renaming-a-file-using-the-git-api-fed1e6f04188
+      // However do check the comments of that article.
+      let r = await github.get(`/repos/${this.repo?.full_name}/branches/main`);
+      const sha = r.data.commit.sha; // get latest commit sha
+      r = await github.get(`/repos/${this.repo?.full_name}/git/trees/${sha}`);
+      const tree = r.data.tree; // get latest tree
+      const c = tree.find((c: Content) => c.sha === content.sha);
+      c.path = newPath; // rename
+      r = await github.post(`/repos/${this.repo?.full_name}/git/trees`, {
+        tree,
+      }); // create new tree
+      r = await github.post(`/repos/${this.repo?.full_name}/git/commits`, {
+        message: `Rename ${content.path} to ${newPath}`,
+        tree: r.data.sha,
+        parents: [sha],
+      }); // create new commit
+      r = await github.patch(`/repos/${this.repo?.full_name}/git/refs/heads/main`, {
+        sha: r.data.sha,
+      }); // update branch to point to new commit
+      await this.refresh();
     } else {
-      console.log(`rename folder ${content.name} to ${newName}`);
+      console.log(`rename folder ${content.path} to ${newPath}`);
     }
   }
 }

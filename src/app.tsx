@@ -93,8 +93,8 @@ const App = (props: { store: Store }) => {
                     <li key={content.name}>
                       <Text
                         editable={{
-                          onChange: (newName) => store.rename(content, newName),
-                          text: content.name,
+                          onChange: (newPath) => store.rename(content, newPath),
+                          text: content.path,
                         }}
                       >
                         {content.name}
