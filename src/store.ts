@@ -110,7 +110,7 @@ export class Store {
     this.chooseContent({ type: 'dir', path: this.path });
   }
 
-  public async deleteContent(content: Content) {
+  public async delete(content: Content) {
     if (content.type === 'file') {
       await github.delete(`/repos/${this.repo?.full_name}/contents/${content.path}`, {
         data: {
@@ -121,6 +121,17 @@ export class Store {
       this.refresh();
     } else {
       // delete all the files in the dir
+    }
+  }
+
+  public async rename(content: Content, newName: string) {
+    if (newName === content.name) {
+      return;
+    }
+    if (content.type === 'file') {
+      console.log(`rename file ${content.name} to ${newName}`);
+    } else {
+      console.log(`rename folder ${content.name} to ${newName}`);
     }
   }
 }

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Button, Divider, Popconfirm, Space, Tooltip, Typography, Upload } from 'antd';
 import { auto } from 'manate/react';
-import { DeleteOutlined, ReloadOutlined, UploadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, CopyOutlined, ReloadOutlined, UploadOutlined, FolderOpenOutlined } from '@ant-design/icons';
 
 import type { Store, Token } from './store';
 import CONSTS from './constants';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const App = (props: { store: Store }) => {
   useEffect(() => {
@@ -91,16 +91,25 @@ const App = (props: { store: Store }) => {
                   )}
                   {store.contents.map((content) => (
                     <li key={content.name}>
-                      {content.type === 'dir' ? '📁' : ''}
-                      <Button type="link" onClick={() => store.chooseContent(content)}>
+                      <Text
+                        editable={{
+                          onChange: (newName) => store.rename(content, newName),
+                          text: content.name,
+                        }}
+                      >
                         {content.name}
                         {content.type === 'dir' ? '/' : ''}
-                      </Button>
+                      </Text>
+                      <Tooltip title={content.type === 'dir' ? 'open folder' : 'copy URI'}>
+                        <Button type="link" onClick={() => store.chooseContent(content)}>
+                          {content.type === 'dir' ? <FolderOpenOutlined /> : <CopyOutlined />}
+                        </Button>
+                      </Tooltip>
                       <Popconfirm
                         title={`Delete the ${content.type === 'dir' ? 'folder' : 'file'}`}
                         description={`Are you sure to delete this ${content.type === 'dir' ? 'folder' : 'file'}?`}
                         onConfirm={() => {
-                          store.deleteContent(content);
+                          store.delete(content);
                         }}
                       >
                         <Button type="link" danger>
