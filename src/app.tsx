@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Button, Divider, Popconfirm, Space, Tooltip, Typography, Upload } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Divider, Input, Modal, Popconfirm, Space, Tooltip, Typography, Upload } from 'antd';
 import { auto } from 'manate/react';
 import {
   DeleteOutlined,
@@ -17,6 +17,11 @@ import CONSTS from './constants';
 const { Title, Text } = Typography;
 
 const App = (props: { store: Store }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState('mkdir');
+  const [modalVal, setModalVal] = useState('');
+  const [modalTitle, setModalTitle] = useState('');
+
   useEffect(() => {
     const removeListner = global.ipc.on(CONSTS.LOGIN_TO_WEB, (event: any, token: Token) => {
       props.store.token = token;
@@ -26,10 +31,29 @@ const App = (props: { store: Store }) => {
       removeListner();
     };
   }, []);
+
   const render = () => {
     const { store } = props;
     return (
       <>
+        <Modal
+          open={isModalOpen}
+          title={modalTitle}
+          onOk={() => {
+            setIsModalOpen(false);
+            if (modalAction === 'mkdir') {
+              store.mkdir(modalVal.trim());
+            }
+          }}
+          onCancel={() => setIsModalOpen(false)}
+        >
+          <Input
+            value={modalVal}
+            onChange={(e) => {
+              setModalVal(e.target.value);
+            }}
+          />
+        </Modal>
         <Title>Image Hosting by GitHub Pages</Title>
         {store.token === undefined ? (
           <Button onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>Login via GitHub</Button>
@@ -59,7 +83,15 @@ const App = (props: { store: Store }) => {
                     <Button shape="circle" icon={<ReloadOutlined />} onClick={() => store.refresh()} />
                   </Tooltip>
                   <Tooltip title="new folder">
-                    <Button icon={<FolderAddOutlined />} onClick={() => store.newFolder()} />
+                    <Button
+                      icon={<FolderAddOutlined />}
+                      onClick={() => {
+                        setModalTitle('New Folder');
+                        setModalVal('');
+                        setIsModalOpen(true);
+                        setModalAction('mkdir');
+                      }}
+                    />
                   </Tooltip>
                   <Upload
                     multiple={false}

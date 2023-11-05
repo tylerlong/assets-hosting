@@ -124,9 +124,12 @@ export class Store {
     }
   }
 
-  public async newFolder() {
-    await github.put(`/repos/${this.repo?.full_name}/contents/${path.join(this.path, 'untitled folder', '.gitkeep')}`, {
-      message: 'Create a new folder',
+  public async mkdir(folderName: string) {
+    if (folderName === '') {
+      return;
+    }
+    await github.put(`/repos/${this.repo?.full_name}/contents/${path.join(this.path, folderName, '.gitkeep')}`, {
+      message: `Create ${folderName}/`,
       content: '',
     });
     this.refresh();
