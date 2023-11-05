@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react';
 import { Button, Divider, Popconfirm, Space, Tooltip, Typography, Upload } from 'antd';
 import { auto } from 'manate/react';
-import { DeleteOutlined, CopyOutlined, ReloadOutlined, UploadOutlined, FolderOpenOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  CopyOutlined,
+  ReloadOutlined,
+  UploadOutlined,
+  FolderOpenOutlined,
+  FolderAddOutlined,
+  RollbackOutlined,
+} from '@ant-design/icons';
 
 import type { Store, Token } from './store';
 import CONSTS from './constants';
@@ -50,6 +58,9 @@ const App = (props: { store: Store }) => {
                   <Tooltip title="refresh">
                     <Button shape="circle" icon={<ReloadOutlined />} onClick={() => store.refresh()} />
                   </Tooltip>
+                  <Tooltip title="new folder">
+                    <Button icon={<FolderAddOutlined />} onClick={() => store.newFolder()} />
+                  </Tooltip>
                   <Upload
                     multiple={false}
                     accept=".png,.jpg,.jpeg,image/png,image/jpeg"
@@ -84,9 +95,8 @@ const App = (props: { store: Store }) => {
                             path: store.path.split('/').slice(0, -1).join('/'),
                           })
                         }
-                      >
-                        ⬆️
-                      </Button>
+                        icon={<RollbackOutlined />}
+                      />
                     </li>
                   )}
                   {store.contents.map((content) => (
