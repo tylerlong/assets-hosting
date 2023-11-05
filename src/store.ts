@@ -129,16 +129,26 @@ export class Store {
       return;
     }
     if (content.type === 'file') {
-      // ref: https://medium.com/@obodley/renaming-a-file-using-the-git-api-fed1e6f04188
-      // However do check the comments of that article.
       let r = await github.get(`/repos/${this.repo?.full_name}/branches/main`);
-      const sha = r.data.commit.sha; // get latest commit sha
-      r = await github.get(`/repos/${this.repo?.full_name}/git/trees/${sha}`);
-      const tree = r.data.tree; // get latest tree
-      const c = tree.find((c: Content) => c.sha === content.sha);
-      c.path = newPath; // rename
+      const sha = r.data.commit.sha; // get latest commit sha, it's also the latest tree sha
       r = await github.post(`/repos/${this.repo?.full_name}/git/trees`, {
-        tree,
+        base_tree: sha,
+        tree: [
+          {
+            // create new
+            path: newPath,
+            mode: '100644',
+            type: 'blob',
+            sha: content.sha,
+          },
+          {
+            // delete old
+            path: content.path,
+            mode: '100644',
+            type: 'blob',
+            sha: null,
+          },
+        ],
       }); // create new tree
       r = await github.post(`/repos/${this.repo?.full_name}/git/commits`, {
         message: `Rename ${content.path} to ${newPath}`,
