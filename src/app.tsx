@@ -56,7 +56,9 @@ const App = (props: { store: Store }) => {
         </Modal>
         <Title>Image Hosting by GitHub Pages</Title>
         {store.token === undefined ? (
-          <Button onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>Login via GitHub</Button>
+          <Button size="large" block type="primary" onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>
+            Login via GitHub
+          </Button>
         ) : (
           <>
             <Title level={3}>{store.repo === undefined ? 'Please choose a repo:' : store.repo.full_name}</Title>
@@ -80,7 +82,7 @@ const App = (props: { store: Store }) => {
               <>
                 <Space>
                   <Tooltip title="refresh">
-                    <Button shape="circle" icon={<ReloadOutlined />} onClick={() => store.refresh()} />
+                    <Button icon={<ReloadOutlined />} onClick={() => store.refresh()} />
                   </Tooltip>
                   <Tooltip title="new folder">
                     <Button
@@ -119,45 +121,58 @@ const App = (props: { store: Store }) => {
                 <ul>
                   {store.path === '' ? null : (
                     <li key="..">
-                      <Button
-                        type="link"
-                        onClick={() =>
-                          store.chooseContent({
-                            type: 'dir',
-                            path: store.path.split('/').slice(0, -1).join('/'),
-                          })
-                        }
-                        icon={<RollbackOutlined />}
-                      />
+                      <Tooltip title="go to parent folder">
+                        <Button
+                          type="link"
+                          onClick={() =>
+                            store.chooseContent({
+                              type: 'dir',
+                              path: store.path.split('/').slice(0, -1).join('/'),
+                            })
+                          }
+                          icon={<RollbackOutlined />}
+                        />
+                      </Tooltip>
                     </li>
                   )}
                   {store.contents.map((content) => (
                     <li key={content.name}>
-                      <Text
-                        editable={{
-                          onChange: (newPath) => store.rename(content, newPath),
-                          text: content.path,
-                        }}
-                      >
-                        {content.name}
-                        {content.type === 'dir' ? '/' : ''}
-                      </Text>
-                      <Tooltip title={content.type === 'dir' ? 'open folder' : 'copy URI'}>
-                        <Button type="link" onClick={() => store.chooseContent(content)}>
-                          {content.type === 'dir' ? <FolderOpenOutlined /> : <CopyOutlined />}
-                        </Button>
-                      </Tooltip>
-                      <Popconfirm
-                        title={`Delete the ${content.type === 'dir' ? 'folder' : 'file'}`}
-                        description={`Are you sure to delete this ${content.type === 'dir' ? 'folder' : 'file'}?`}
-                        onConfirm={() => {
-                          store.delete(content);
-                        }}
-                      >
-                        <Button type="link" danger>
-                          <DeleteOutlined />
-                        </Button>
-                      </Popconfirm>
+                      <Space>
+                        <Text
+                          editable={{
+                            onChange: (newPath) => store.rename(content, newPath),
+                            text: content.path,
+                            tooltip: 'rename',
+                          }}
+                        >
+                          {content.name}
+                          {content.type === 'dir' ? '/' : ''}
+                        </Text>
+                        <Tooltip title={content.type === 'dir' ? 'open folder' : 'copy URI'}>
+                          <Button
+                            type="link"
+                            onClick={() => store.chooseContent(content)}
+                            icon={content.type === 'dir' ? <FolderOpenOutlined /> : <CopyOutlined />}
+                          />
+                        </Tooltip>
+                        <Popconfirm
+                          title={`Delete the ${content.type === 'dir' ? 'folder' : 'file'}`}
+                          description={`Are you sure to delete this ${content.type === 'dir' ? 'folder' : 'file'}?`}
+                          onConfirm={() => {
+                            store.delete(content);
+                          }}
+                        >
+                          <Button
+                            type="link"
+                            danger
+                            icon={
+                              <Tooltip title="delete">
+                                <DeleteOutlined />
+                              </Tooltip>
+                            }
+                          />
+                        </Popconfirm>
+                      </Space>
                     </li>
                   ))}
                 </ul>
