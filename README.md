@@ -5,4 +5,3 @@
 
 - Spinner to indicate that it's in progress
 - delete folder
-- recursive rename folder

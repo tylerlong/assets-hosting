@@ -164,19 +164,20 @@ export class Store {
       }); // create new tree
     } else {
       // rename folder
-      r = await github.get(`/repos/${this.repo.full_name}/contents/${content.path}`);
+      r = await github.get(`/repos/${this.repo?.full_name}/git/trees/${sha}`, { params: { recursive: 1 } });
       const tree = [];
-      for (const item of r.data) {
+      const blobs = r.data.tree.filter((item) => item.type === 'blob' && item.path.startsWith(content.path + '/'));
+      for (const blob of blobs) {
         tree.push({
           // create new
-          path: path.join(newPath, path.basename(item.path)),
+          path: path.join(newPath + blob.path.substr(content.path.length)),
           mode: '100644',
           type: 'blob',
-          sha: item.sha,
+          sha: blob.sha,
         });
         tree.push({
           // delete old
-          path: item.path,
+          path: blob.path,
           mode: '100644',
           type: 'blob',
           sha: null,
