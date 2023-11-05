@@ -4,4 +4,3 @@
 ## Todo
 
 - Spinner to indicate that it's in progress
-- delete folder

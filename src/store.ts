@@ -120,7 +120,33 @@ export class Store {
       });
       this.refresh();
     } else {
-      // delete all the files in the dir
+      let r = await github.get(`/repos/${this.repo?.full_name}/branches/main`);
+      const sha = r.data.commit.sha; // get latest commit sha, it's also the latest tree sha
+      r = await github.get(`/repos/${this.repo?.full_name}/git/trees/${sha}`, { params: { recursive: 1 } });
+      const tree = [];
+      const blobs = r.data.tree.filter((item) => item.type === 'blob' && item.path.startsWith(content.path + '/'));
+      for (const blob of blobs) {
+        tree.push({
+          // delete old
+          path: blob.path,
+          mode: '100644',
+          type: 'blob',
+          sha: null,
+        });
+      }
+      r = await github.post(`/repos/${this.repo?.full_name}/git/trees`, {
+        base_tree: sha,
+        tree,
+      }); // create new tree
+      r = await github.post(`/repos/${this.repo?.full_name}/git/commits`, {
+        message: `Delete ${content.path}/`,
+        tree: r.data.sha,
+        parents: [sha],
+      }); // create new commit
+      r = await github.patch(`/repos/${this.repo?.full_name}/git/refs/heads/main`, {
+        sha: r.data.sha,
+      }); // update branch to point to new commit
+      await this.refresh();
     }
   }
 
@@ -141,6 +167,7 @@ export class Store {
     }
     let r = await github.get(`/repos/${this.repo?.full_name}/branches/main`);
     const sha = r.data.commit.sha; // get latest commit sha, it's also the latest tree sha
+    let message = `Rename ${content.path} to ${newPath}`;
     // rename file
     if (content.type === 'file') {
       r = await github.post(`/repos/${this.repo?.full_name}/git/trees`, {
@@ -164,6 +191,7 @@ export class Store {
       }); // create new tree
     } else {
       // rename folder
+      message = `Rename ${content.path}/ to ${newPath}/`;
       r = await github.get(`/repos/${this.repo?.full_name}/git/trees/${sha}`, { params: { recursive: 1 } });
       const tree = [];
       const blobs = r.data.tree.filter((item) => item.type === 'blob' && item.path.startsWith(content.path + '/'));
@@ -189,7 +217,7 @@ export class Store {
       }); // create new tree
     }
     r = await github.post(`/repos/${this.repo?.full_name}/git/commits`, {
-      message: `Rename ${content.path} to ${newPath}`,
+      message,
       tree: r.data.sha,
       parents: [sha],
     }); // create new commit
