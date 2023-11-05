@@ -3,6 +3,6 @@
 
 ## Todo
 
-- Spinner to indicat that it's in progress
+- Spinner to indicate that it's in progress
 - delete folder
-- rename folder
+- recursive rename folder

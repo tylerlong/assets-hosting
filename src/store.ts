@@ -139,9 +139,10 @@ export class Store {
     if (newPath === content.path) {
       return;
     }
+    let r = await github.get(`/repos/${this.repo?.full_name}/branches/main`);
+    const sha = r.data.commit.sha; // get latest commit sha, it's also the latest tree sha
+    // rename file
     if (content.type === 'file') {
-      let r = await github.get(`/repos/${this.repo?.full_name}/branches/main`);
-      const sha = r.data.commit.sha; // get latest commit sha, it's also the latest tree sha
       r = await github.post(`/repos/${this.repo?.full_name}/git/trees`, {
         base_tree: sha,
         tree: [
@@ -161,18 +162,40 @@ export class Store {
           },
         ],
       }); // create new tree
-      r = await github.post(`/repos/${this.repo?.full_name}/git/commits`, {
-        message: `Rename ${content.path} to ${newPath}`,
-        tree: r.data.sha,
-        parents: [sha],
-      }); // create new commit
-      r = await github.patch(`/repos/${this.repo?.full_name}/git/refs/heads/main`, {
-        sha: r.data.sha,
-      }); // update branch to point to new commit
-      await this.refresh();
     } else {
-      console.log(`rename folder ${content.path} to ${newPath}`);
+      // rename folder
+      r = await github.get(`/repos/${this.repo.full_name}/contents/${content.path}`);
+      const tree = [];
+      for (const item of r.data) {
+        tree.push({
+          // create new
+          path: path.join(newPath, path.basename(item.path)),
+          mode: '100644',
+          type: 'blob',
+          sha: item.sha,
+        });
+        tree.push({
+          // delete old
+          path: item.path,
+          mode: '100644',
+          type: 'blob',
+          sha: null,
+        });
+      }
+      r = await github.post(`/repos/${this.repo?.full_name}/git/trees`, {
+        base_tree: sha,
+        tree,
+      }); // create new tree
     }
+    r = await github.post(`/repos/${this.repo?.full_name}/git/commits`, {
+      message: `Rename ${content.path} to ${newPath}`,
+      tree: r.data.sha,
+      parents: [sha],
+    }); // create new commit
+    r = await github.patch(`/repos/${this.repo?.full_name}/git/refs/heads/main`, {
+      sha: r.data.sha,
+    }); // update branch to point to new commit
+    await this.refresh();
   }
 }
 
