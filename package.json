@@ -1,8 +1,8 @@
 {
-  "name": "image-hosting-by-github-pages",
+  "name": "assets-hosting-by-github-pages",
   "version": "0.1.0",
   "private": true,
-  "description": "Image Hosting by GitHub Pages",
+  "description": "Assets Hosting by GitHub Pages",
   "license": "UNLICENSED",
   "author": {
     "name": "MacMate.app",
@@ -53,7 +53,7 @@
       "build"
     ]
   },
-  "productName": "Image Hosting by GitHub Pages",
+  "productName": "Assets Hosting by GitHub Pages",
   "targets": {
     "electron": {
       "source": "src/electron.ts",

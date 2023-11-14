@@ -1,8 +1,9 @@
-# Image Hosting by GitHub Pages
+# Assets Hosting by GitHub Pages
 
 
 ## Todo
 
+- Release the first version
 - Spinner to indicate that it's in progress
 - Change repo
 - Let user install

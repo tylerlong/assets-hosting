@@ -54,7 +54,7 @@ const App = (props: { store: Store }) => {
             }}
           />
         </Modal>
-        <Title>Image Hosting by GitHub Pages</Title>
+        <Title>Assets Hosting</Title>
         {store.token === undefined ? (
           <Button size="large" block type="primary" onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>
             Login via GitHub
@@ -97,7 +97,7 @@ const App = (props: { store: Store }) => {
                   </Tooltip>
                   <Upload
                     multiple={false}
-                    accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                    accept=".png,.jpg,.jpeg,.mp4,.mov"
                     showUploadList={false}
                     customRequest={({ onSuccess }) => setTimeout(() => onSuccess('ok'), 0)}
                     onChange={({ file }) => {
