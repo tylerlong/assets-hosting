@@ -55,6 +55,7 @@ ipcMain.handle(CONSTS.LOGIN_TO_ELECTRON, (event) => {
   let authWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    alwaysOnTop: true,
   });
   authWindow.loadURL(`https://github.com/login/oauth/authorize?client_id=${CONSTS.GITHUB_CLIENT_ID}`);
   authWindow.on('closed', () => {
