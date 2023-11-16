@@ -1,5 +1,5 @@
 {
-  "name": "assets-hosting-by-github-pages",
+  "name": "assets-hosting",
   "version": "0.1.0",
   "private": true,
   "description": "Assets Hosting by GitHub Pages",
@@ -53,7 +53,7 @@
       "build"
     ]
   },
-  "productName": "Assets Hosting by GitHub Pages",
+  "productName": "Assets Hosting",
   "targets": {
     "electron": {
       "source": "src/electron.ts",
