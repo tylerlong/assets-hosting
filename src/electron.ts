@@ -20,7 +20,6 @@ const createWindow = () => {
     mainWindow.loadFile(join('build', 'index.html'));
   } else {
     mainWindow.loadURL('http://localhost:1234');
-    mainWindow.webContents.openDevTools();
   }
 };
 
