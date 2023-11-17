@@ -1,0 +1,30 @@
+{
+  "formKey": "tr1lHRJmQ2akifxl7PtjOg/4",
+  "elements": [
+    {
+      "id": "tr1lHRJmQ2akifxl7PtjOg/1",
+      "adjustX": 0,
+      "adjustY": 0,
+      "hidden": false,
+      "color": "#00e06c",
+      "type": "Square",
+      "length": 420,
+      "cornerRadius": 64,
+      "__type": "Square"
+    },
+    {
+      "id": "tr1lHRJmQ2akifxl7PtjOg/3",
+      "adjustX": 128,
+      "adjustY": 128,
+      "hidden": false,
+      "color": "white",
+      "type": "Icon",
+      "scale": 1,
+      "path": [
+        "feather-icons",
+        "upload-cloud"
+      ],
+      "__type": "Icon"
+    }
+  ]
+}
