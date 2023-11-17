@@ -1,6 +1,6 @@
 {
   "name": "assets-hosting",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Assets Hosting by GitHub Pages",
   "license": "UNLICENSED",
@@ -14,6 +14,7 @@
     "start": "nodemon --watch build/electron.js --exec 'electron .'",
     "watch": "ts-node scripts/watch.ts",
     "mas-dev": "ts-node scripts/mas-dev.ts && cp -r dist/mas-dev-universal/Assets\\ Hosting.app /Applications/",
+    "mas": "ts-node scripts/mas.ts",
     "test": "playwright test --grep-invert 'video' --workers=1"
   },
   "devDependencies": {
