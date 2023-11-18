@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { join } from 'path';
 import axios from 'axios';
 import qs from 'qs';
@@ -50,6 +50,10 @@ ipcMain.handle(CONSTS.HOST, async (event, login) => {
   }
 });
 
+ipcMain.handle(CONSTS.INSTALL_GITHUB_APP, () => {
+  shell.openExternal('https://github.com/apps/assets-hosting');
+});
+
 ipcMain.handle(CONSTS.LOGIN_TO_ELECTRON, (event) => {
   let authWindow = new BrowserWindow({
     width: 800,
@@ -61,7 +65,7 @@ ipcMain.handle(CONSTS.LOGIN_TO_ELECTRON, (event) => {
     authWindow = null;
   });
   const handleRedirectUrl = async (url) => {
-    if (url.startsWith('https://github.com/tylerlong/image-hosting/?code=')) {
+    if (url.startsWith('https://github.com/tylerlong/assets-hosting/?code=')) {
       authWindow.close();
       const code = url.split('=')[1];
       const r = await axios.post(

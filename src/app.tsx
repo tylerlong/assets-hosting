@@ -14,7 +14,7 @@ import {
 import type { Store, Token } from './store';
 import CONSTS from './constants';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const App = (props: { store: Store }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,6 +55,13 @@ const App = (props: { store: Store }) => {
           />
         </Modal>
         <Title>Assets Hosting</Title>
+        <Paragraph>
+          If you haven't done so, please{' '}
+          <Text mark>
+            <a onClick={() => global.ipc.invoke(CONSTS.INSTALL_GITHUB_APP)}>install this app on GitHub</a>
+          </Text>{' '}
+          to your organization or account. Otherwise this app won't be able to function properly.
+        </Paragraph>
         {store.token === undefined ? (
           <Button size="large" block type="primary" onClick={() => global.ipc.invoke(CONSTS.LOGIN_TO_ELECTRON)}>
             Login via GitHub

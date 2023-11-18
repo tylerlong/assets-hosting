@@ -10,7 +10,6 @@ You can use the uploaded images/videos as assets in your web pages because they 
 - Release the first version
 - Spinner to indicate that it's in progress
 - Change repo
-- Let user install
-  - Detect user logged in or not
+- Detect user logged in or not, installed or not, and provide messages
 - log out
 - refactor code
