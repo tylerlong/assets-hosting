@@ -7,7 +7,6 @@ const build = async () => {
   yarn parcel build --target electron --no-source-maps
   yarn parcel build --target web --no-source-maps
   yarn parcel build --target preload --no-source-maps
-  yarn parcel build --target settings --no-source-maps
 `);
 };
 

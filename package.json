@@ -15,22 +15,22 @@
     "watch": "ts-node scripts/watch.ts",
     "mas-dev": "ts-node scripts/mas-dev.ts && cp -r dist/mas-dev-universal/Assets\\ Hosting.app /Applications/",
     "mas": "ts-node scripts/mas.ts",
-    "test": "playwright test --grep-invert 'video' --workers=1",
-    "github": "ts-node -r dotenv-override-true/config scripts/github.ts"
+    "test": "playwright test --grep-invert 'video' --workers=1 && rm -rf test-results",
+    "release": "ts-node -r dotenv-override-true/config scripts/release.ts"
   },
   "devDependencies": {
     "@ant-design/icons": "^5.2.6",
     "@playwright/test": "^1.40.0",
-    "@types/node": "^20.9.1",
+    "@types/node": "^20.9.2",
     "@types/qs": "^6.9.10",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
-    "antd": "^5.11.1",
+    "antd": "^5.11.2",
     "dotenv-override-true": "^6.2.2",
     "electron": "^27.1.0",
     "electron-builder": "^24.6.4",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "eslint-config-alloy": "^5.1.2",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -47,14 +47,9 @@
     "slugify": "^1.6.6",
     "sort-package-json": "^2.6.0",
     "ts-node": "^10.9.1",
-    "ttpt": "^0.6.6",
+    "ttpt": "^0.7.5",
     "typescript": "^5.2.2",
     "yarn-upgrade-all": "^0.7.2"
-  },
-  "build": {
-    "files": [
-      "build"
-    ]
   },
   "productName": "Assets Hosting",
   "targets": {
