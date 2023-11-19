@@ -15,7 +15,8 @@
     "watch": "ts-node scripts/watch.ts",
     "mas-dev": "ts-node scripts/mas-dev.ts && cp -r dist/mas-dev-universal/Assets\\ Hosting.app /Applications/",
     "mas": "ts-node scripts/mas.ts",
-    "test": "playwright test --grep-invert 'video' --workers=1"
+    "test": "playwright test --grep-invert 'video' --workers=1",
+    "github": "ts-node -r dotenv-override-true/config scripts/github.ts"
   },
   "devDependencies": {
     "@ant-design/icons": "^5.2.6",
@@ -26,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "antd": "^5.11.1",
+    "dotenv-override-true": "^6.2.2",
     "electron": "^27.1.0",
     "electron-builder": "^24.6.4",
     "eslint": "^8.53.0",
