@@ -13,7 +13,6 @@
     "lint": "eslint --fix '**/*.{ts,tsx,js,jsx}' && prettier --write . && sort-package-json",
     "start": "nodemon --watch build/electron.js --exec 'electron .'",
     "watch": "ts-node scripts/watch.ts",
-    "mas-dev": "ts-node scripts/mas-dev.ts && cp -r dist/mas-dev-universal/Assets\\ Hosting.app /Applications/",
     "mas": "ts-node scripts/mas.ts",
     "test": "playwright test --grep-invert 'video' --workers=1 && rm -rf test-results",
     "release": "ts-node -r dotenv-override-true/config scripts/release.ts"
